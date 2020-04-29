@@ -6,7 +6,7 @@ provider "aws" {
 
 #Create ECR repo 
 resource "aws_ecr_repository" "mercury" {
-  name                 = "dev-mercury-ecr"
+  name                 = "mercury-ecr"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -16,15 +16,15 @@ resource "aws_ecr_repository" "mercury" {
 
 #ALB creation
 resource "aws_lb" "ecs-alb" {
-  name               = "Dev-ECS-ALB"
+  name               = "ECS-ALB"
   internal           = false
   load_balancer_type = "application"
   subnets            = ["${var.public-subnet-1a}", "${var.public-subnet-1b}"]
   security_groups    = ["${var.ecs-sg}", "${var.ping-sg}"]
 
   tags = {
-    Environment = "Dev"
-    Name        = "Dev-ECS-ALB"
+    Environment = "Name"
+    Name        = "ECS-ALB"
   }
 }
 
@@ -49,7 +49,7 @@ resource "aws_lb_target_group" "ecs-target-group" {
 }
 
 # Redirect all traffic from the ALB to the target group
-resource "aws_lb_listener" "dev-ecs-http" {
+resource "aws_lb_listener" "ecs-http" {
   load_balancer_arn = aws_lb.ecs-alb.id
   port              = "80"
   protocol          = "HTTP"
@@ -67,7 +67,7 @@ resource "aws_lb_listener" "dev-ecs-http" {
   }
 }
 
-resource "aws_lb_listener" "dev-ecs-https" {
+resource "aws_lb_listener" "ecs-https" {
   load_balancer_arn = aws_lb.ecs-alb.id
   port              = "443"
   protocol          = "HTTPS"
@@ -157,7 +157,7 @@ resource "aws_ecs_service" "main" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    security_groups  = ["${var.ecs-sg}", "${var.ping-sg}", "${var.dev-alb-sg}"]
+    security_groups  = ["${var.ecs-sg}", "${var.ping-sg}", "${var.alb-sg}"]
     subnets          = ["${var.private-subnet-1a}", "${var.private-subnet-1b}"]
     assign_public_ip = false
   }

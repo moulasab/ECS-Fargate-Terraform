@@ -35,7 +35,7 @@ variable "ecs-sg" {
 variable "ping-sg" {
   default = "sg-4543433"
 }
-variable "dev-alb-sg" {
+variable "alb-sg" {
   default = "sg-34343334"
 }
 variable "image-arn" {
